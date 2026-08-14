@@ -63,8 +63,9 @@
   --c-head1: #ffffff;
   --c-head2: rgba(255,255,255,.63);
   --c-sub:   rgba(255,255,255,.86);
-  --c-line:  rgba(255,255,255,.85);
-  --c-glass: rgba(255,255,255,.17);
+  --c-line:  rgba(255,255,255,.92);   /* corner registration marks */
+  --c-glass: rgba(255,255,255,.90);   /* CTA panel: near-solid frosted white */
+  --c-cta-fg:#2b2430;                 /* dark label on the white panel */
 }
 @supports (height:100dvh){ :root{ --vh:100dvh; } }
 
@@ -221,32 +222,35 @@ h1 .l2{display:block;color:var(--c-head2)}
   height:max(28px, calc(38 * var(--k)));
   font-size:var(--fs-cta);
   font-weight:400; letter-spacing:.004em;
-  color:#fff; text-decoration:none; white-space:nowrap;
+  color:var(--c-cta-fg); text-decoration:none; white-space:nowrap;
   background:var(--c-glass);
-  border:max(1px, calc(1.4 * var(--k))) solid var(--c-line);
+  border:0;
   -webkit-backdrop-filter:blur(7px) saturate(118%);
           backdrop-filter:blur(7px) saturate(118%);
+  /* geometry of the detached corner marks */
+  --brk-gap:max(3px,   calc(5 * var(--k)));
+  --brk-len:max(8px,   calc(17 * var(--k)));
+  --brk-w:  max(1px,   calc(1.4 * var(--k)));
   transition:background .3s ease, box-shadow .35s ease, transform .35s ease;
 }
 .cta:hover,.cta:focus-visible{
-  background:rgba(255,255,255,.24);
-  box-shadow:0 0 calc(30 * var(--k)) rgba(255,236,214,.35);
+  background:#fff;
+  box-shadow:0 0 calc(34 * var(--k)) rgba(255,236,214,.40);
   transform:translateY(calc(-1 * var(--k)));
 }
-/* corner brackets — heavier and brighter than the border, so they read
-   as distinct crop marks rather than disappearing into it */
-.cta i{position:absolute;pointer-events:none;
-       width:max(7px, calc(16 * var(--k)));height:max(7px, calc(16 * var(--k)))}
-.cta i::before,.cta i::after{content:'';position:absolute;background:#fff}
-.cta i::before{width:100%;height:max(1.5px, calc(2 * var(--k)))}
-.cta i::after{width:max(1.5px, calc(2 * var(--k)));height:100%}
-.cta .tl{left:-1px;top:-1px}
-.cta .tl::before{left:0;top:0}   .cta .tl::after{left:0;top:0}
-.cta .tr{right:-1px;top:-1px}
-.cta .tr::before{right:0;top:0}  .cta .tr::after{right:0;top:0}
-.cta .bl{left:-1px;bottom:-1px}
-.cta .bl::before{left:0;bottom:0}.cta .bl::after{left:0;bottom:0}
-.cta .br{right:-1px;bottom:-1px}
+/* Corner registration marks — thin white L's sitting OUTSIDE the panel,
+   separated from it by --brk-gap. They are not a border. */
+.cta i{position:absolute;pointer-events:none;width:var(--brk-len);height:var(--brk-len)}
+.cta i::before,.cta i::after{content:'';position:absolute;background:var(--c-line)}
+.cta i::before{width:100%;height:var(--brk-w)}
+.cta i::after{width:var(--brk-w);height:100%}
+.cta .tl{left:calc(-1 * (var(--brk-gap) + var(--brk-w)));top:calc(-1 * (var(--brk-gap) + var(--brk-w)))}
+.cta .tl::before{left:0;top:0}    .cta .tl::after{left:0;top:0}
+.cta .tr{right:calc(-1 * (var(--brk-gap) + var(--brk-w)));top:calc(-1 * (var(--brk-gap) + var(--brk-w)))}
+.cta .tr::before{right:0;top:0}   .cta .tr::after{right:0;top:0}
+.cta .bl{left:calc(-1 * (var(--brk-gap) + var(--brk-w)));bottom:calc(-1 * (var(--brk-gap) + var(--brk-w)))}
+.cta .bl::before{left:0;bottom:0} .cta .bl::after{left:0;bottom:0}
+.cta .br{right:calc(-1 * (var(--brk-gap) + var(--brk-w)));bottom:calc(-1 * (var(--brk-gap) + var(--brk-w)))}
 .cta .br::before{right:0;bottom:0}.cta .br::after{right:0;bottom:0}
 
 /* ---- measured internal gaps (tuned against the render) ---- */
