@@ -163,8 +163,10 @@ body{
   transform:scaleX(0); transform-origin:50% 50%;
   transition:transform .32s cubic-bezier(.4,0,.2,1);
 }
-.nav a:hover,.nav a:focus-visible{color:#fff}
-.nav a:hover::after,.nav a:focus-visible::after{transform:scaleX(1)}
+/* No hover treatment on nav items. The underline/colour lift is kept for
+   :focus-visible only, so keyboard navigation still shows where it is. */
+.nav a:focus-visible{color:#fff}
+.nav a:focus-visible::after{transform:scaleX(1)}
 
 .mark{
   flex:none;
@@ -385,12 +387,6 @@ h1 .l2{display:block;color:var(--c-head2)}
     transition:opacity .42s cubic-bezier(.22,.61,.36,1),
                transform .42s cubic-bezier(.22,.61,.36,1);
   }
-  /* No hover treatment on the menu items. These are touch surfaces, where
-     :hover sticks after a tap; the focus-visible outline still covers
-     keyboard use. The desktop nav row keeps its hover untouched. */
-  .nav-links a::after{content:none}
-  .nav-links a:hover{color:var(--c-nav)}
-
   .nav.open .nav-links a:nth-child(1){transition-delay:.06s}
   .nav.open .nav-links a:nth-child(2){transition-delay:.12s}
   .nav.open .nav-links a:nth-child(3){transition-delay:.18s}
