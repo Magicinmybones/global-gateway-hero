@@ -211,8 +211,13 @@ h1 .l2{display:block;color:var(--c-head2)}
   margin-top:var(--gap-cta);
   position:relative;
   display:inline-flex; align-items:center; justify-content:center;
-  /* measured width, never narrower than its own label needs */
-  width:max(calc(182 * var(--k)), calc(var(--fs-cta) * 6.28 + 38px));
+  /* 12.3% wider than the portal core it stands over — the reference
+     relationship (182 / 161.5 = 1.123). It tracks --s, not --k, so the
+     overhang survives viewports where --k is clamped; bounded either
+     side so the label always fits and the box never runs away. */
+  width:clamp(calc(var(--fs-cta) * 6.28 + 38px),
+              calc(124 * var(--s) * 1.1228),
+              calc(var(--fs-cta) * 6.28 + 175px));
   height:max(28px, calc(38 * var(--k)));
   font-size:var(--fs-cta);
   font-weight:400; letter-spacing:.004em;
@@ -228,11 +233,13 @@ h1 .l2{display:block;color:var(--c-head2)}
   box-shadow:0 0 calc(30 * var(--k)) rgba(255,236,214,.35);
   transform:translateY(calc(-1 * var(--k)));
 }
-/* corner brackets */
-.cta i{position:absolute;width:calc(9 * var(--k));height:calc(9 * var(--k));pointer-events:none}
+/* corner brackets — heavier and brighter than the border, so they read
+   as distinct crop marks rather than disappearing into it */
+.cta i{position:absolute;pointer-events:none;
+       width:max(7px, calc(16 * var(--k)));height:max(7px, calc(16 * var(--k)))}
 .cta i::before,.cta i::after{content:'';position:absolute;background:#fff}
-.cta i::before{width:100%;height:1px}
-.cta i::after{width:1px;height:100%}
+.cta i::before{width:100%;height:max(1.5px, calc(2 * var(--k)))}
+.cta i::after{width:max(1.5px, calc(2 * var(--k)));height:100%}
 .cta .tl{left:-1px;top:-1px}
 .cta .tl::before{left:0;top:0}   .cta .tl::after{left:0;top:0}
 .cta .tr{right:-1px;top:-1px}
