@@ -56,7 +56,7 @@
   --fs-nav:   max(11px,   calc(20.8 * var(--k)));
   --fs-head:  calc(94 * var(--k));
   --fs-sub:   max(12.5px, calc(22.6 * var(--k)));
-  --fs-cta:   max(10.5px, calc(18 * var(--k)));
+  --fs-cta:   max(11px,   calc(20.25 * var(--k)));
 
   /* ---- measured colour ---- */
   --c-nav:   rgba(255,255,255,.90);
@@ -202,14 +202,17 @@ h1 .l2{display:block;color:var(--c-head2)}
 }
 
 /* ============================================================
-   CTA — width is locked to the portal core (124 asset px)
+   CTA — 182 x 38 design px, label 128 wide (27 px side padding).
+   It is a shade wider than the portal core it stands over, which
+   is how the reference draws it; its BOTTOM edge is what is
+   anchored to the portal (see .stack).
    ============================================================ */
 .cta{
   margin-top:var(--gap-cta);
   position:relative;
   display:inline-flex; align-items:center; justify-content:center;
-  /* portal-locked, but never narrower than its own label needs */
-  width:max(calc(124 * var(--s)), calc(var(--fs-cta) * 6.28 + 34px));
+  /* measured width, never narrower than its own label needs */
+  width:max(calc(182 * var(--k)), calc(var(--fs-cta) * 6.28 + 38px));
   height:max(28px, calc(38 * var(--k)));
   font-size:var(--fs-cta);
   font-weight:400; letter-spacing:.004em;
