@@ -174,7 +174,38 @@ body{
 }
 .mark:hover{transform:rotate(22.5deg)}
 .mark svg{display:block;width:100%;height:100%}
-.nav-break{display:none}
+
+/* Desktop: the link container dissolves so its children lay out directly in
+   the nav flex row, ordered around the centred mark. */
+.nav-links{display:contents}
+.nav-links a:nth-child(1){order:1}
+.nav-links a:nth-child(2){order:2}
+.mark{order:3}
+.nav-links a:nth-child(3){order:4}
+.nav-links a:nth-child(4){order:5}
+
+/* Burger — thin white rules matching the site's 1–1.4px line language.
+   Present in the DOM at all widths, revealed only by the tablet query. */
+.burger{
+  order:6; display:none;
+  position:absolute; top:50%; right:6vw;
+  transform:translateY(-50%);
+  width:44px; height:44px;                 /* touch target */
+  align-items:center; justify-content:center;
+  background:none; border:0; padding:0; cursor:pointer;
+  z-index:10;
+}
+.burger span{
+  position:absolute; left:50%;
+  width:clamp(22px, 3vw, 30px); height:1.6px;
+  background:var(--c-line);
+  transform:translateX(-50%);
+  transition:transform .38s cubic-bezier(.4,0,.2,1), opacity .3s ease;
+}
+.burger span:nth-child(1){margin-top:-4.5px}
+.burger span:nth-child(2){margin-top:4.5px}
+.nav.open .burger span:nth-child(1){transform:translateX(-50%) rotate(45deg);margin-top:0}
+.nav.open .burger span:nth-child(2){transform:translateX(-50%) rotate(-45deg);margin-top:0}
 
 /* ============================================================
    HERO STACK — bottom-anchored to the portal, so the CTA always
@@ -272,12 +303,101 @@ h1 .l2{display:block;color:var(--c-head2)}
    RESPONSIVE — nav stacks on narrow viewports so the four labels
    never crowd the mark. Everything else stays proportional.
    ============================================================ */
-@media (max-width:700px){
-  .nav{flex-wrap:wrap; gap:0; top:max(12px, calc(50 * var(--k)))}
-  .mark{order:-2; margin:0 0 max(10px, calc(26 * var(--k)))}
-  .nav-break{display:block; order:-1; flex-basis:100%; height:0}
-  .nav a:not(.mark){margin:0 min(4.4vw, calc(50 * var(--k)))}
-  .sub{line-height:1.42; text-wrap:balance}   /* wrapped copy needs air, no orphans */
+/* ============================================================
+   TABLET ARCHITECTURE
+
+   The breakpoint is derived from the design, not from a device.
+   In landscape --kfit can never bind (0.9*vw/1090 always exceeds
+   0.765*vw/1530), so the desktop composition never degrades and is
+   kept at every landscape width. In portrait --kfit starts binding at
+   vw < 0.908*vh: the headline pins to 90vw and drags the whole type
+   scale down with it — subtitle 17.4px -> 13.1px, CTA 15.6px -> 11.7px
+   — while side margins collapse to 5%. Below 1080px wide that same
+   pinning also puts the subtitle under 20px. Hence: portrait past
+   0.91 aspect, at or below 1080px.
+
+   The fix is architectural, not compressive: the supporting type is
+   decoupled from the headline's width constraint so it can hold a
+   comfortable tablet size, the headline takes a fluid measure with
+   real margins, and the four nav links move into a menu surface.
+   ============================================================ */
+@media (max-width:1080px) and (max-aspect-ratio:0.91/1), (max-width:620px){
+
+  /* --- type: sized for the tablet, no longer a by-product of --kfit --- */
+  :root{
+    /* The vw term governs across the tablet range; the floors only engage
+       on phone-sized viewports, where they hand back the original scale. */
+    --fs-sub: clamp(12.5px, 2.05vw, 21px);
+    --fs-cta: clamp(11.5px, 1.85vw, 19px);
+    /* gaps follow the tablet type, not --k, or they read tight against it */
+    --gap-sub: clamp(7px,  1.8vw, 22px);
+    --gap-cta: clamp(16px, 3.2vw, 34px);
+  }
+  h1{ font-size:clamp(24px, 6.9vw, 76px); }   /* 12.05em measure ≈ 83vw: holds one line */
+  .stack{ padding:0 8vw; }                     /* real margins, not 5% */
+  .sub{
+    max-width:min(84vw, 62ch);
+    line-height:1.42;
+    text-wrap:balance;                         /* no orphans when it wraps */
+  }
+
+  /* --- nav: mark stays, links move behind the burger --- */
+  .nav{
+    gap:0; padding:0 6vw; z-index:20;
+    top:max(16px, min(3.2vw, calc(62 * var(--k))));
+  }
+  .mark{
+    margin:0; order:0;
+    width:clamp(26px, 4.6vw, 46px);
+    height:clamp(26px, 4.6vw, 46px);
+  }
+  .burger{ display:flex; }
+
+  /* Menu surface — the site's own glass language: violet ground, heavy
+     blur, thin white rules, centred symmetry. Same links, same hover. */
+  .nav-links{
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    gap:clamp(20px, 3.6vw, 38px);
+    position:fixed; inset:0; z-index:9;
+    background:rgba(10,6,28,.55);
+    -webkit-backdrop-filter:blur(24px) saturate(120%);
+            backdrop-filter:blur(24px) saturate(120%);
+    opacity:0; visibility:hidden;
+    transition:opacity .38s cubic-bezier(.4,0,.2,1),
+               visibility 0s linear .38s;
+  }
+  .nav.open .nav-links{
+    opacity:1; visibility:visible;
+    transition:opacity .38s cubic-bezier(.4,0,.2,1), visibility 0s;
+  }
+  .nav-links a{
+    font-size:clamp(20px, 3.4vw, 30px);
+    padding-bottom:.28em;
+    opacity:0; transform:translateY(calc(14 * var(--k)));
+    transition:opacity .001s, transform .001s;
+  }
+  .nav.open .nav-links a{
+    opacity:1; transform:none;
+    transition:opacity .42s cubic-bezier(.22,.61,.36,1),
+               transform .42s cubic-bezier(.22,.61,.36,1);
+  }
+  .nav.open .nav-links a:nth-child(1){transition-delay:.06s}
+  .nav.open .nav-links a:nth-child(2){transition-delay:.12s}
+  .nav.open .nav-links a:nth-child(3){transition-delay:.18s}
+  .nav.open .nav-links a:nth-child(4){transition-delay:.24s}
+
+  /* Touch target for the CTA, without touching its drawn box (§9/§31) */
+  .cta::after{
+    content:''; position:absolute; left:0; right:0; top:50%;
+    height:max(100%, 44px); transform:translateY(-50%);
+  }
+}
+
+/* Short viewports in the tablet architecture: pull the nav in tighter */
+@media (max-width:1080px) and (max-aspect-ratio:0.91/1) and (max-height:520px),
+       (max-width:620px) and (max-height:520px){
+  .nav{top:10px}
 }
 
 /* Short viewports: honouring the reference framing would leave no sky
@@ -286,15 +406,14 @@ h1 .l2{display:block;color:var(--c-head2)}
 @media (max-height:620px){
   :root{ --ptop: max(calc(var(--vh) * .4429), calc(500 * var(--k) + 78px)); }
 }
-@media (max-width:700px) and (max-height:520px){
-  .mark{margin-bottom:max(6px, calc(14 * var(--k)))}
-  .nav{top:8px}
-}
 
 /* ---- entrance ---- */
 @media (prefers-reduced-motion:no-preference){
   .nav,.stack>*{animation:rise .9s cubic-bezier(.22,.61,.36,1) both}
-  .nav{animation-delay:.05s}
+  /* backwards, not both: the final keyframe equals the nav's natural state,
+     so the entrance is unchanged, but no identity transform is retained —
+     that would make .nav a containing block and trap the fixed menu. */
+  .nav{animation-delay:.05s; animation-fill-mode:backwards}
   h1{animation-delay:.14s}
   .sub{animation-delay:.26s}
   .cta{animation-delay:.38s}
@@ -316,16 +435,24 @@ h1 .l2{display:block;color:var(--c-head2)}
   <div class="portal-glow"></div>
 
   <nav class="nav" aria-label="Primary">
-    <a href="#solutions">Solutions</a>
-    <a href="#product">Product</a>
+    <!-- One set of links serves both layouts: display:contents lets them sit
+         directly in the nav row on desktop, and the same container becomes
+         the menu surface on tablet. No duplicated markup. -->
+    <div class="nav-links" id="primary-menu">
+      <a href="#solutions">Solutions</a>
+      <a href="#product">Product</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#recourses">Recourses</a>
+    </div>
     <a href="#" class="mark" aria-label="Home">
       <svg viewBox="0 0 52 52" role="img" aria-hidden="true" fill="none">
         <g fill="#fff" stroke="#fff" stroke-width=".9" stroke-linejoin="round"><path d="M27.15 17.40L28.05 3.45A2.05 2.05 0 0 0 23.95 3.45L24.85 17.40Z"/><path d="M30.35 18.49L36.52 5.95A2.05 2.05 0 0 0 32.74 4.38L28.23 17.61Z"/><path d="M32.89 20.73L43.39 11.50A2.05 2.05 0 0 0 40.50 8.61L31.27 19.11Z"/><path d="M34.39 23.77L47.62 19.26A2.05 2.05 0 0 0 46.05 15.48L33.51 21.65Z"/><path d="M34.60 27.15L48.55 28.05A2.05 2.05 0 0 0 48.55 23.95L34.60 24.85Z"/><path d="M33.51 30.35L46.05 36.52A2.05 2.05 0 0 0 47.62 32.74L34.39 28.23Z"/><path d="M31.27 32.89L40.50 43.39A2.05 2.05 0 0 0 43.39 40.50L32.89 31.27Z"/><path d="M28.23 34.39L32.74 47.62A2.05 2.05 0 0 0 36.52 46.05L30.35 33.51Z"/><path d="M24.85 34.60L23.95 48.55A2.05 2.05 0 0 0 28.05 48.55L27.15 34.60Z"/><path d="M21.65 33.51L15.48 46.05A2.05 2.05 0 0 0 19.26 47.62L23.77 34.39Z"/><path d="M19.11 31.27L8.61 40.50A2.05 2.05 0 0 0 11.50 43.39L20.73 32.89Z"/><path d="M17.61 28.23L4.38 32.74A2.05 2.05 0 0 0 5.95 36.52L18.49 30.35Z"/><path d="M17.40 24.85L3.45 23.95A2.05 2.05 0 0 0 3.45 28.05L17.40 27.15Z"/><path d="M18.49 21.65L5.95 15.48A2.05 2.05 0 0 0 4.38 19.26L17.61 23.77Z"/><path d="M20.73 19.11L11.50 8.61A2.05 2.05 0 0 0 8.61 11.50L19.11 20.73Z"/><path d="M23.77 17.61L19.26 4.38A2.05 2.05 0 0 0 15.48 5.95L21.65 18.49Z"/></g>
       </svg>
     </a>
-    <i class="nav-break" aria-hidden="true"></i>
-    <a href="#pricing">Pricing</a>
-    <a href="#recourses">Recourses</a>
+    <button class="burger" type="button" aria-label="Open menu"
+            aria-expanded="false" aria-controls="primary-menu">
+      <span></span><span></span>
+    </button>
   </nav>
 
   <div class="stack">
@@ -337,5 +464,43 @@ h1 .l2{display:block;color:var(--c-head2)}
     </a>
   </div>
 </main>
+
+<script>
+/* Tablet menu. CSS owns every layout decision; this only carries the
+   state CSS cannot: aria-expanded, Escape, and focus movement. */
+(function () {
+  var nav  = document.querySelector('.nav'),
+      btn  = document.querySelector('.burger'),
+      menu = document.getElementById('primary-menu'),
+      mq   = window.matchMedia('(max-width:1080px) and (max-aspect-ratio:0.91/1), (max-width:620px)');
+
+  function setOpen(open) {
+    nav.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', String(open));
+    btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    if (open) { var f = menu.querySelector('a'); if (f) f.focus(); }
+  }
+
+  btn.addEventListener('click', function () {
+    var willOpen = !nav.classList.contains('open');
+    setOpen(willOpen);
+    if (!willOpen) btn.focus();
+  });
+
+  /* Follow a link, or click the backdrop, and the menu closes. */
+  menu.addEventListener('click', function (e) {
+    if (e.target.closest('a') || e.target === menu) setOpen(false);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && nav.classList.contains('open')) { setOpen(false); btn.focus(); }
+  });
+
+  /* Leaving the tablet range must never strand the overlay open. */
+  (mq.addEventListener ? mq.addEventListener.bind(mq, 'change') : mq.addListener.bind(mq))(
+    function () { if (!mq.matches) setOpen(false); }
+  );
+})();
+</script>
 </body>
 </html>
