@@ -337,9 +337,21 @@ h1 .l2{display:block;color:var(--c-head2)}
     /* gaps follow the tablet type, not --k, or they read tight against it */
     --gap-sub: clamp(7px,  1.8vw, 22px);
     --gap-cta: clamp(16px, 3.2vw, 34px);
+    /* nav footprint, so the copy region can start below it */
+    --nav-top:      max(16px, min(3.2vw, calc(62 * var(--k))));
+    --mark-size:    clamp(26px, 4.6vw, 46px);
+    --nav-zone:     calc(var(--nav-top) + var(--mark-size));
+    --cta-standoff: clamp(22px, 3.4vh, 48px);
   }
   h1{ font-size:clamp(24px, 6.9vw, 76px); }   /* 12.05em measure ≈ 83vw: holds one line */
-  .stack{ padding:0 8vw; }                     /* real margins, not 5% */
+  /* The copy is a region spanning nav -> portal with its content centred,
+     so the leftover space is shared instead of collecting above the
+     headline: it was running 5-8x heavier at the top than the bottom. */
+  .stack{
+    top:calc(var(--nav-zone) + clamp(18px, 3.2vh, 44px));
+    justify-content:center;
+    padding:0 8vw;                             /* real margins, not 5% */
+  }
   .sub{
     max-width:min(84vw, 62ch);
     line-height:1.42;
@@ -349,12 +361,12 @@ h1 .l2{display:block;color:var(--c-head2)}
   /* --- nav: mark stays, links move behind the burger --- */
   .nav{
     gap:0; padding:0 6vw; z-index:20;
-    top:max(16px, min(3.2vw, calc(62 * var(--k))));
+    top:var(--nav-top);
   }
   .mark{
     margin:0; order:0;
-    width:clamp(26px, 4.6vw, 46px);
-    height:clamp(26px, 4.6vw, 46px);
+    width:var(--mark-size);
+    height:var(--mark-size);
   }
   .burger{ display:flex; }
 
