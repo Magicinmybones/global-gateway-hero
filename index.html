@@ -58,6 +58,8 @@
                      calc(var(--ptop) - 453.5 * var(--s)),
                      0px);
   --portal-top: calc(var(--scene-top) + 453.5 * var(--s));
+  /* how far the CTA's bottom edge sits above the portal's top edge */
+  --cta-standoff: calc(38.5 * var(--k));
 
   /* ---- measured type ---- */
   --fs-nav:   max(11px,   calc(20.8 * var(--k)));
@@ -214,7 +216,7 @@ body{
 .stack{
   position:absolute; z-index:3;
   left:0; right:0;
-  bottom:calc(var(--vh) - var(--portal-top) + 38.5 * var(--k));
+  bottom:calc(var(--vh) - var(--portal-top) + var(--cta-standoff));
   display:flex; flex-direction:column; align-items:center;
   text-align:center;
   padding:0 4vw;
@@ -433,6 +435,14 @@ h1 .l2{display:block;color:var(--c-head2)}
   /* Menu links: same treatment, sized for thumbs */
   .nav-links{ gap:clamp(14px, 3.2vh, 26px); }
   .nav-links a{ font-size:clamp(19px, 5.6vw, 26px); padding:.2em .5em .34em; }
+}
+
+/* Phones with room to spare: lift the copy off the portal. At --k ~0.3 the
+   design standoff collapses to ~12px, which reads as the CTA resting on the
+   portal's edge. Short phones keep the original value — they have no
+   headroom to give. */
+@media (max-width:500px) and (min-height:700px){
+  :root{ --cta-standoff: clamp(26px, 4.6vh, 54px); }
 }
 
 /* Short viewports in the tablet architecture: pull the nav in tighter */
