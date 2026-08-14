@@ -420,29 +420,37 @@ h1 .l2{display:block;color:var(--c-head2)}
     --fs-cta:  clamp(12.5px, min(3.8vw, 2vh),   16px);
     --gap-sub: clamp(8px,  1.6vh, 20px);
     --gap-cta: clamp(14px, 2.6vh, 30px);
+    /* nav footprint, so the copy region can start below it */
+    --nav-top:      clamp(14px, 2.2vh, 26px);
+    --mark-size:    clamp(26px, 7vw, 36px);
+    --nav-zone:     calc(var(--nav-top) + var(--mark-size));
+    --cta-standoff: clamp(18px, 3.2vh, 40px);
   }
   h1{
     font-size:clamp(24px, min(9vw, 4.2vh), 46px);
     text-wrap:balance;              /* no orphaned final word (§16) */
   }
-  .stack{ padding:0 max(20px, 6vw); }
+  /* The copy is a region spanning nav -> portal with its content centred,
+     so leftover space is shared top and bottom instead of being dumped
+     below the CTA. Bottom-anchoring alone pushed the headline into the nav
+     on phones showing the URL bar. */
+  .stack{
+    top:calc(var(--nav-zone) + clamp(14px, 2.6vh, 34px));
+    justify-content:center;
+    padding:0 max(20px, 6vw);
+  }
   .sub{ max-width:100%; line-height:1.5; }
+  .sub br.brk{ display:none; }   /* let the copy reflow: 3 lines -> 2 */
+
+  .nav{ top:var(--nav-top); }
+  .mark{ width:var(--mark-size); height:var(--mark-size); }
 
   .nav{ padding:0 max(18px, 5vw); }
   .burger{ right:max(18px, 5vw); }
-  .mark{ width:clamp(26px, 7vw, 36px); height:clamp(26px, 7vw, 36px); }
 
   /* Menu links: same treatment, sized for thumbs */
   .nav-links{ gap:clamp(14px, 3.2vh, 26px); }
   .nav-links a{ font-size:clamp(19px, 5.6vw, 26px); padding:.2em .5em .34em; }
-}
-
-/* Phones with room to spare: lift the copy off the portal. At --k ~0.3 the
-   design standoff collapses to ~12px, which reads as the CTA resting on the
-   portal's edge. Short phones keep the original value — they have no
-   headroom to give. */
-@media (max-width:500px) and (min-height:700px){
-  :root{ --cta-standoff: clamp(26px, 4.6vh, 54px); }
 }
 
 /* Short viewports in the tablet architecture: pull the nav in tighter */
@@ -508,7 +516,7 @@ h1 .l2{display:block;color:var(--c-head2)}
 
   <div class="stack">
     <h1><span class="l1">Your Personal Gateway To</span><span class="l2">Global Connection</span></h1>
-    <p class="sub">Step through and&nbsp; host real-time, multilingual conversations - no extra<br class="brk">Apps or plugins needed</p>
+    <p class="sub">Step through and&nbsp; host real-time, multilingual conversations - no extra <br class="brk">Apps or plugins needed</p>
     <a class="cta" href="#contact">
       <span>contact sales</span>
       <i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i>
