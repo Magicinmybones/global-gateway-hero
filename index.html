@@ -341,10 +341,15 @@ h1 .l1>span,h1 .l2>span{display:block}
     padding:0 8vw;                             /* real margins, not 5% */
   }
   .sub{
-    max-width:min(84vw, 62ch);
+    /* Never set wider than the headline. Once the title wraps, its longest
+       line is 'Global Connection' — 8.594em of the title's own size — so
+       the subtitle's measure is capped just inside that, and the copy
+       reflows to fill it instead of running past the type above. */
+    max-width:min(84vw, 62ch, calc(8.55 * var(--fs-head)));
     line-height:1.42;
     text-wrap:balance;                         /* no orphans when it wraps */
   }
+  .sub br.brk{display:none}                    /* the cap sets the measure */
 
   /* --- nav: mark stays, links move behind the burger --- */
   .nav{
@@ -445,7 +450,7 @@ h1 .l1>span,h1 .l2>span{display:block}
     justify-content:center;
     padding:0 max(20px, 6vw);
   }
-  .sub{ max-width:100%; line-height:1.5; }
+  .sub{ max-width:min(100%, calc(8.55 * var(--fs-head))); line-height:1.5; }
   .sub br.brk{ display:none; }   /* let the copy reflow: 3 lines -> 2 */
 
   .nav{ top:var(--nav-top); }
