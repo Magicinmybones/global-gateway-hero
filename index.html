@@ -490,8 +490,8 @@ h1 .l1>span,h1 .l2>span{display:block}
     justify-content:center;
     padding:0 max(20px, 6vw);
   }
-  .sub{ max-width:min(100%, calc(7.70 * var(--fs-head))); line-height:1.5; }
-  .sub br.brk{ display:none; }   /* let the copy reflow: 3 lines -> 2 */
+  .sub{ max-width:min(100%, 34ch); line-height:1.5; }
+  .sub br.brk{ display:none; }   /* wider phone measure balances to 3 lines */
 
   .nav{ top:var(--nav-top); }
   .mark{ width:var(--mark-size); height:var(--mark-size); }
